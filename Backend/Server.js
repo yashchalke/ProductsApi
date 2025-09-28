@@ -2,11 +2,16 @@ const express = require('express')
 const {connecttodb} = require('./db/db')
 require('dotenv').config();
 const productroutes = require('./routes/productroutes')
+const cors = require('cors')
 
 const PORT = process.env.PORT;
 const DB_URL = process.env.DB_URL;
 
 const app = express();
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}))
 
 app.use(express.json());
 

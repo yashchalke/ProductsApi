@@ -61,15 +61,15 @@ const filterController = async (req, res) => {
     const query = []
 
     if (category && category.length > 0) {
-      query.category = { $in: category }
+      query.push({ category: { $in: category } })
     }
 
     if (size && size.length > 0) {
-      query.size = { $in: size }
+      query.push({ size: { $in: size } })
     }
 
     if (colors && colors.length > 0) {
-      query.colors = { $in: colors }
+      query.push({ colors: { $in: colors } })
     }
 
     let priceArray = []
@@ -99,23 +99,20 @@ const filterController = async (req, res) => {
         }
       })
 
-      if (priceConditions.length > 0) {
-        query.push({ $or: priceConditions })
-
-      }
+      query.push({ $or: priceConditions })
     }
 
-    const products = await Product.find({$and: query})
+    const products = await Product.find({ $and: query })
     res.status(200).json({
       success: true,
       message: 'Filtered products fetched successfully',
-      data: products,
+      data: products
     })
   } catch (err) {
     console.log('Error filtering products:', err)
     res.status(500).json({
       success: false,
-      message: 'Error filtering products',
+      message: 'Error filtering products'
     })
   }
 }

@@ -1,130 +1,86 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const Filter = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault()
+const Filter = ({ setFilters }) => {
+  const [localFilters, setLocalFilters] = useState({
+    category: [],
+    size: [],
+    colors: [],
+    price: []
+  })
 
-    const formData = new FormData(e.target)
-    const selectedCategories = formData.getAll('category')
-    const selectedSizes = formData.getAll('size')
-    const selectedColors = formData.getAll('colors')
-    const selectedPrices = formData.getAll('price')
+  const handleCheckbox = (type, value) => {
+    setLocalFilters((prev) => {
+      const updated = prev[type].includes(value)
+        ? prev[type].filter((v) => v !== value)
+        : [...prev[type], value]
+      return { ...prev, [type]: updated }
+    })
+  }
 
-    alert(`
-      Selected Categories: ${selectedCategories.join(', ') || 'None'}
-      Selected Sizes: ${selectedSizes.join(', ') || 'None'}
-      Selected Colors: ${selectedColors.join(', ') || 'None'}
-      Selected Price Ranges: ${selectedPrices.join(', ') || 'None'}
-    `)
-
+  const applyFilters = () => {
+    setFilters(localFilters)
   }
 
   return (
-    <div className='
-  
-    border
-  border-white
-    w-100
-    h-180
-  bg-gray-300
-    p-5
-    rounded-2xl '>
-      <h1 className='
-      text-black
-      font-bold
-      text-2xl
-      pb-2
-      border-b-2
-      border-gray-400
-      '>Filter</h1>
-      <form onSubmit={handleSubmit}>
-        
-        <h1 className='mt-2 font-semibold'>Category</h1>
-        <div className='flex flex-col pb-2 border-b-2 border-gray-400'>
-        <label className='flex items-center gap-2'>
-            <input type="checkbox" name="category" value="shirts" />
-            Shirts
+    <div className='border border-white bg-gray-300 p-5 rounded-2xl'>
+      <h1 className='text-black font-bold text-2xl pb-2 border-b-2 border-gray-400'>Filter</h1>
+
+      {/* Category */}
+      <h1 className='mt-2 font-semibold'>Category</h1>
+      <div className='flex flex-col pb-2 border-b-2 border-gray-400'>
+        {['shirts', 't-shirts', 'jeans', 'shorts'].map((cat) => (
+          <label key={cat} className='flex items-center gap-2'>
+            <input type="checkbox" onChange={() => handleCheckbox('category', cat)} />
+            {cat}
           </label>
-          <label className='flex items-center gap-2'>
-            <input type="checkbox" name="category" value="t-shirts" />
-            T-Shirts
+        ))}
+      </div>
+
+      {/* Size */}
+      <h1 className='mt-2 font-semibold'>Size</h1>
+      <div className='flex flex-col pb-2 border-b-2 border-gray-400'>
+        {['small', 'medium', 'large', 'x-large'].map((size) => (
+          <label key={size} className='flex gap-2'>
+            <input type="checkbox" onChange={() => handleCheckbox('size', size)} />
+            {size}
           </label>
-          <label className='flex items-center gap-2'>
-            <input type="checkbox" name="category" value="jeans" />
-            Jeans
+        ))}
+      </div>
+
+      {/* Colors */}
+      <h1 className='mt-2 font-semibold'>Colors</h1>
+      <div className='flex flex-wrap p-2 justify-center gap-x-10 w-full h-[120px] border-b-2 border-gray-400'>
+        {['black', 'white', 'yellow', 'purple', 'blue', 'green', 'red', 'pink'].map((color) => (
+          <label key={color} className='cursor-pointer'>
+            <input
+              type='checkbox'
+              value={color}
+              onChange={() => handleCheckbox('colors', color)}
+              className='hidden peer'
+            />
+            <div className={`border w-10 h-10 rounded-full bg-${color}-500 peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-gray-600`}></div>
           </label>
-          <label className='flex items-center gap-2'>
-            <input type="checkbox" name="category" value="shorts" />
-            Shorts
+        ))}
+      </div>
+
+      {/* Price */}
+      <h1 className='mt-2 font-semibold'>Price Range</h1>
+      <div className='flex flex-col gap-2 pb-3 border-b-2 border-gray-400'>
+        {['under-500', '500-2000', '2000-5000', 'above-5000'].map((range) => (
+          <label key={range} className='flex items-center gap-2'>
+            <input type="checkbox" onChange={() => handleCheckbox('price', range)} />
+            {range.replace('-', ' to ₹')}
           </label>
-        </div>
-        <h1 className='mt-2 font-semibold'>Size</h1>
-        <div className='flex flex-col pb-2 border-b-2 border-gray-400'>
-          <label className='flex gap-2'>
-            <input type='checkbox' name='size' value="small" />
-            Small
-          </label>
-          <label className='flex gap-2'>
-            <input type='checkbox' name='size' value="medium" />
-            Medium
-          </label>
-          <label className='flex gap-2'>
-            <input type='checkbox' name='size' value="large" />
-            Large
-          </label>
-          <label className='flex gap-2'>
-            <input type='checkbox' name='size' value="x-large" />
-            X-Large
-          </label>
-        </div>
-        <h1 className='mt-2 font-semibold'>Colors</h1>
-        <div className='flex flex-wrap p-2 justify-center gap-x-10 w-full h-[120px] border-b-2 border-gray-400'>
-  {[
-    { name: 'black', color: 'bg-black' },
-    { name: 'white', color: 'bg-white' },
-    { name: 'yellow', color: 'bg-yellow-200' },
-    { name: 'purple', color: 'bg-purple-400' },
-    { name: 'blue', color: 'bg-blue-500' },
-    { name: 'green', color: 'bg-green-400' },
-    { name: 'red', color: 'bg-red-500' },
-    { name: 'pink', color: 'bg-pink-300' },
-  ].map(({ name, color }) => (
-    <label key={name} className='cursor-pointer'>
-      <input
-        type='checkbox'
-        name='colors'
-        value={name}
-        className='hidden peer'
-      />
-      <div
-        className={`border w-10 h-10 rounded-full ${color} peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-gray-600`}
-      ></div>
-    </label>
-  ))}
-</div>
-<h1 className='mt-2 font-semibold'>Price Range</h1>
-<div className='flex flex-col gap-2 pb-3 border-b-2 border-gray-400'>
-  <label className='flex items-center gap-2'>
-    <input type="checkbox" name="price" value="under-500" />
-    Under ₹500
-  </label>
-  <label className='flex items-center gap-2'>
-    <input type="checkbox" name="price" value="1000-2000" />
-    ₹1,000 – ₹2,000
-  </label>
-  <label className='flex items-center gap-2'>
-    <input type="checkbox" name="price" value="2000-5000" />
-    ₹2,000 – ₹5,000
-  </label>
-  <label className='flex items-center gap-2'>
-    <input type="checkbox" name="price" value="above-5000" />
-    Above ₹5,000
-  </label>
-</div>
-<button className='mt-2 border w-full p-2 rounded-3xl bg-black text-white cursor-pointer hover:bg-white hover:text-black hover:font-semibold'
-type='submit'
->Apply Filter</button>
-      </form>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={applyFilters}
+        className='mt-2 border w-full p-2 rounded-3xl bg-black text-white cursor-pointer hover:bg-white hover:text-black hover:font-semibold'
+      >
+        Apply Filter
+      </button>
     </div>
   )
 }
